@@ -42,8 +42,8 @@ router.post('/login',(req,res,next)=>{
 		userName:req.body.userName,
 		passWord:req.body.passWord,
 	}
-	let captcha = req.body.captcha.toLowerCase();
-	let sessionCaptcha = req.session.captcha.toLowerCase();
+  let captcha = req.body.captcha.toLowerCase();
+  let sessionCaptcha = req.session.captcha.toLowerCase();
 	if(captcha ==sessionCaptcha){
 		User.find(param,(err,data)=>{
 			if(err){

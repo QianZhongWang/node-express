@@ -40,7 +40,7 @@ app.use(session({
   secret:'12345',//表示对session数据进行加密的字符串。这个属性必须为指定属性
   name:'captcha',  //表示cookie的name
   cookie:{maxAge:60000},//cookie的过期时间
-  resave:false,//是指每次请求都会重新设置 seesion cookie
+  resave:true,//是指每次请求都会重新设置 seesion cookie
   saveUninitialized:true  //是指无论有木有session cookie每次请求都会设置个seesion和cookie
 }))
 app.use('/', indexRouter);
