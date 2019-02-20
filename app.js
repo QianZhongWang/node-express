@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var session = require('express-session')
 var bodyParser =require('body-parser');
 var logger = require('morgan');
 var ejs = require('ejs')
@@ -12,22 +13,15 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 // //解决跨域问题
-// app.all('*', function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-//   res.header("X-Powered-By", ' 3.2.1')
-//   res.header("Content-Type", "application/json;charset=utf-8");
+
+// app.all('*', function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
+//   res.header('Access-Control-Allow-Headers', 'Content-Type');
+//   res.header('Access-Control-Allow-Methods', '*');
+//   res.header('Content-Type', 'application/json;charset=utf-8');
 //   next();
 // });
-app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  //Access-Control-Allow-Headers ,可根据浏览器的F12查看,把对应的粘贴在这里就行
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.header('Access-Control-Allow-Methods', '*');
-  res.header('Content-Type', 'application/json;charset=utf-8');
-  next();
-});
 
 
 // view engine setup
@@ -42,6 +36,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(session({
+  secret:'12345',//表示对session数据进行加密的字符串。这个属性必须为指定属性
+  name:'captcha',  //表示cookie的name
+  cookie:{maxAge:60000},//cookie的过期时间
+  resave:false,//是指每次请求都会重新设置 seesion cookie
+  saveUninitialized:true  //是指无论有木有session cookie每次请求都会设置个seesion和cookie
+}))
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
@@ -59,6 +60,7 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
+  console.log(err)
   res.status(err.status || 500);
   res.render('error');
 });
