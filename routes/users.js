@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const User = require('../models/users')
 const svgCaptcha = require('svg-captcha')
+const jwt = require('jsonwebtoken')
 
 //链接mongoDB数据库
 mongoose.connect('mongodb://127.0.0.1:27017/node_mongoDB',{useNewUrlParser:true});
@@ -36,6 +37,24 @@ router.get('/captcha',(req,res,next)=>{
 	})
 })
 
+//生成Token的方法
+// function generateToken(info,data){
+//    let content = info //生成token的主要信息
+//    let secretOrPrivateKey = "suiyi" //这是加密的key(秘钥)
+//    let token = jwt.sign(content,secretOrPrivateKey,{
+//        expiresIn:60*60*1 //一个小时过期
+//    })
+//    data[0].token = token;//token 写入数据库
+//    db.users(data[0]).save((err)=>{
+//        if(err){
+//            res.json({
+               
+//            })
+//        }
+//    })
+
+// }
+
 //用户登录
 router.post('/login',(req,res,next)=>{
 	let param = {
@@ -53,10 +72,31 @@ router.post('/login',(req,res,next)=>{
 				})
 			}else{
 			if(data.length===1){
-				res.json({
-					status:0,
-					msg:"登录成功"
-				})
+                let content ={name:param.userName} ;//要生成的token的主体信息
+                let secretOrPrivateKey = "suiyi" //这是加密的key(秘钥)
+                console.log(1)
+                let token = jwt.sign(content,secretOrPrivateKey,{
+                    expiresIn:60*60*1 //1小时过期
+                })
+                console.log(token)
+                data[0].token = token
+                console.log(data[0])
+                User.update({userName:data[0].userName},data[0],(err)=>{
+                    if(err){
+                        res.json({
+                            status:1,
+                            msg:err.message
+                        })
+                        return
+                    }
+                    res.json({
+                        'status':0,
+                        'msg':"登录成功",
+                        'token':token,
+                        'userName':req.body.userName
+                    })
+                })
+				
 			}else{
 				res.json({
 					status:1,

@@ -43,6 +43,8 @@ app.use(session({
   resave:true,//是指每次请求都会重新设置 seesion cookie
   saveUninitialized:true  //是指无论有木有session cookie每次请求都会设置个seesion和cookie
 }))
+
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
