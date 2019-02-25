@@ -76,7 +76,7 @@ router.post('/login',(req,res,next)=>{
                 let secretOrPrivateKey = "suiyi" //这是加密的key(秘钥)
                 console.log(1)
                 let token = jwt.sign(content,secretOrPrivateKey,{
-                    expiresIn:60*60*1 //1小时过期
+                    expiresIn:60
                 })
                 console.log(token)
                 data[0].token = token
